@@ -3,7 +3,6 @@ from flask_restx import Api, Resource, Namespace, reqparse, fields
 from werkzeug.datastructures import FileStorage
 from audio import convert
 
-
 app = Flask(__name__)
 
 api = Api(app,
@@ -15,12 +14,12 @@ api = Api(app,
 
           )
 
-
 upload_parser = reqparse.RequestParser()
 upload_parser.add_argument('file', location='files',
                            type=FileStorage, required=True)
 upload_parser.add_argument('period', type=int, required=True)
 upload_parser.add_argument('outputName', type=str, required=True)
+
 
 # upload = api.model("convert", {
 #     "period": fields.Integer,
