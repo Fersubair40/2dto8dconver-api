@@ -1,1 +1,1 @@
-web: gunicorn run:app --access-logfile - --capture-output
+web: gunicorn app:app --access-logfile - --capture-output

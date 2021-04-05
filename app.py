@@ -50,9 +50,10 @@ class Convert(Resource):
         return send_file(outputName, as_attachment=True)
 
 
-@app.route("/")
-def hello_world():
-    return 'Hello World!'
+@api.route("/hello")
+class Index(Resource):
+    def get(self):
+        return 'Hello World!'
 
 
 if __name__ == '__main__':
