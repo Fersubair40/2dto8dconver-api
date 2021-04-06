@@ -1,2 +1,2 @@
-web: gunicorn app:server --access-logfile - --capture-output --timeout 180 --keep-alive 5
+web: gunicorn app:server --access-logfile - --capture-output --timeout 900 --keep-alive 500
 
