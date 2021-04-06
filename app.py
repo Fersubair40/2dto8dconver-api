@@ -1,11 +1,10 @@
 from flask import Flask, send_file, request
 from flask_restx import Api, Resource, Namespace, reqparse, fields
 from werkzeug.datastructures import FileStorage
-from flask_cors import  CORS
 from audio import convert
 
 server = Flask(__name__)
-CORS(server)
+
 
 api = Api(server,
           version='1.0',

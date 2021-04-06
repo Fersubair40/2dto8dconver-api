@@ -4,7 +4,13 @@ from mutagen.mp3 import MP3
 from mutagen.easyid3 import EasyID3
 from pydub import AudioSegment
 from argparse import ArgumentParser
+from  os import  system
+from sys import argv
 
+reverberance = 50
+SECONDS = 3500
+MIN_FADE_VOL = -15.0
+FADE_TIME = 1000
 
 
 def convert(inputfile, outputfile, period):
@@ -13,8 +19,35 @@ def convert(inputfile, outputfile, period):
     elif period == 0:
         period = 200
     audio = AudioSegment.from_file(inputfile, format='mp3')
-    audio = audio + AudioSegment.silent(duration=150)
+    audio = audio + AudioSegment.silent(duration=SECONDS)
+    left = audio.pan(-1)
+    right = audio.pan(1)
+    faded_left = AudioSegment.silent(duration=0)
+    faded_right = AudioSegment.silent(duration=0)
     fileinfo = MP3(inputfile, ID3=EasyID3)
+
+    i = 0
+
+    while len(faded_left) < len(audio):
+        faded_left += left[i:i + SECONDS - FADE_TIME].fade(from_gain=MIN_FADE_VOL, start=0,
+                                                           duration=SECONDS - FADE_TIME)
+        faded_left += left[i + SECONDS - FADE_TIME:i + SECONDS]
+        i += SECONDS
+        faded_left += left[i:i + SECONDS - FADE_TIME].fade(to_gain=MIN_FADE_VOL, start=0, duration=SECONDS - FADE_TIME)
+        faded_left += left[i + SECONDS - FADE_TIME:i + SECONDS] + MIN_FADE_VOL
+        i += SECONDS
+
+    i = 0
+
+    while len(faded_right) < len(audio):
+        faded_right += right[i:i + SECONDS - FADE_TIME].fade(to_gain=MIN_FADE_VOL, start=0,
+                                                             duration=SECONDS - FADE_TIME)
+        faded_right += right[i + SECONDS - FADE_TIME:i + SECONDS] + MIN_FADE_VOL
+        i += SECONDS
+        faded_right += right[i:i + SECONDS - FADE_TIME].fade(from_gain=MIN_FADE_VOL, start=0,
+                                                             duration=SECONDS - FADE_TIME)
+        faded_right += right[i + SECONDS - FADE_TIME:i + SECONDS]
+        i += SECONDS
 
     eightD = AudioSegment.empty()
     pan = 0.9 * np.sin(np.linspace(0, 2 * np.pi, period))
@@ -26,7 +59,10 @@ def convert(inputfile, outputfile, period):
         newChunk = chunk.pan(pan[i % period])
         eightD = eightD + newChunk
 
-    eightD.export(outputfile, format='mp3', bitrate=str(fileinfo.info.bitrate), )
+    final = faded_right.overlay(faded_left)
+    final = final[:len(audio[:-SECONDS])]
+
+    final.export(outputfile, format='mp3')
 
 
 # def tags(info):
