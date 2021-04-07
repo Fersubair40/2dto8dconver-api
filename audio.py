@@ -1,11 +1,10 @@
-import numpy as np
-from tqdm import tqdm
-from mutagen.mp3 import MP3
-from mutagen.easyid3 import EasyID3
-from pydub import AudioSegment
 from argparse import ArgumentParser
-from  os import  system
-from sys import argv
+
+import numpy as np
+from mutagen.easyid3 import EasyID3
+from mutagen.mp3 import MP3
+from pydub import AudioSegment
+from tqdm import tqdm
 
 reverberance = 50
 SECONDS = 3500
