@@ -52,7 +52,7 @@ class Convert(Resource):
         # if output_name[-4:] != '.mp3':
         #     output_name += '.mp3'
         file.save(file.filename)
-        q.enqueue(convert, file.filename, outputName, int(period))
+        q.enqueue(convert(file.filename, outputName, int(period)))
         return send_file(outputName, as_attachment=True)
 
 
