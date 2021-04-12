@@ -3,13 +3,17 @@ from flask_restx import Api, Resource, Namespace, reqparse, fields
 from werkzeug.datastructures import FileStorage
 from audio import convert
 
+from rq import  Queue
+from worker import conn
+
 server = Flask(__name__)
 
+q = Queue(connection=conn)
 
 api = Api(server,
           version='1.0',
-          title='2d to 8d convert',
-          description='Convert 2d audi to 8d',
+          title='2d to 8d audio convert',
+          description='Convert 2d audi0 to 8d',
           license='MIT',
           doc='/docs/',
 
@@ -48,7 +52,7 @@ class Convert(Resource):
         # if output_name[-4:] != '.mp3':
         #     output_name += '.mp3'
         file.save(file.filename)
-        convert(file.filename, outputName, int(period))
+        q.enqueue(convert(file.filename, outputName, int(period)),  'http://heroku.com')
         return send_file(outputName, as_attachment=True)
 
 

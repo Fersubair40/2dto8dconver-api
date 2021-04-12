@@ -19,3 +19,6 @@ tqdm==4.59.0
 typing-extensions==3.7.4.3
 Werkzeug==1.0.1
 zipp==3.4.1
+
+redis~=3.5.3
+rq~=1.8.0
